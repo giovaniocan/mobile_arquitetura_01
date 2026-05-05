@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../controllers/product_controller.dart';
+import '../controllers/product_state.dart';
 import '../widgets/product_card.dart';
 
 class ProductListPage extends StatefulWidget {
@@ -36,11 +37,11 @@ class _ProductListPageState extends State<ProductListPage> {
   }
 
   Widget _buildBody() {
-    if (widget.controller.isLoading) {
+    if (widget.controller.state.status == ProductStatus.loading) {
       return const Center(child: CircularProgressIndicator());
     }
 
-    if (widget.controller.errorMessage != null) {
+    if (widget.controller.state.status == ProductStatus.error) {
       return Center(
         child: Padding(
           padding: const EdgeInsets.all(24),
@@ -48,7 +49,7 @@ class _ProductListPageState extends State<ProductListPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                widget.controller.errorMessage!,
+                widget.controller.state.errorMessage!,
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
@@ -62,7 +63,8 @@ class _ProductListPageState extends State<ProductListPage> {
       );
     }
 
-    if (widget.controller.products.isEmpty) {
+    if (widget.controller.state.status == ProductStatus.success &&
+        widget.controller.products.isEmpty) {
       return const Center(child: Text('Nenhum produto encontrado.'));
     }
 

@@ -1,33 +1,23 @@
-# mobile_arquitetura_01
+# mobile_arquitetura_02
 
-Aplicacao Flutter desenvolvida para a atividade de Arquitetura em Camadas da disciplina Desenvolvimento para Dispositivos Moveis II.
+Projeto feito em Flutter para a disciplina de Desenvolvimento para Dispositivos Moveis II.
 
-## Objetivo
+O app consome a API `https://fakestoreapi.com/products` e mostra os produtos em tela com titulo, preco e imagem.
 
-Consumir a API publica `https://fakestoreapi.com/products` e exibir uma lista de produtos com:
+Neste projeto eu organizei o codigo em camadas:
 
-- titulo
-- preco
-- imagem
+- `presentation`
+- `domain`
+- `data`
+- `core`
 
-## Arquitetura utilizada
+Tambem foram adicionados:
 
-O projeto foi organizado nas seguintes camadas:
-
-- `presentation`: telas, widgets e controller da interface
-- `domain`: entidades, contratos e caso de uso
-- `data`: models, datasource remoto e implementacao do repositorio
-- `core`: utilitarios compartilhados, como cliente HTTP e tratamento de erro
-
-## Estrutura de pastas
-
-```text
-lib/
-  core/
-  data/
-  domain/
-  presentation/
-```
+- estado de carregamento
+- estado de sucesso
+- estado de erro
+- tratamento de erro na requisicao
+- cache local simples
 
 ## Como executar
 
@@ -36,19 +26,28 @@ flutter pub get
 flutter run
 ```
 
-## Como testar
+## Atividade 5
 
-```bash
-flutter analyze
-flutter test
-```
+### 1. Em qual camada foi implementado o mecanismo de cache? Explique por que essa decisao e adequada dentro da arquitetura proposta.
 
-## Funcionamento
+O cache foi implementado na camada `data`, no `ProductLocalDataSource`.
 
-Ao abrir a aplicacao, a tela principal faz a requisicao para a API, converte os dados em objetos da aplicacao e exibe os produtos em uma lista.
+Eu considerei essa decisao adequada porque o cache faz parte do acesso aos dados. Assim, a interface nao precisa saber se os produtos vieram da internet ou do armazenamento local. Isso ajuda a manter o projeto mais organizado.
 
-Tambem foi implementado:
+### 2. Por que o ViewModel nao deve realizar chamadas HTTP diretamente?
 
-- carregamento com `CircularProgressIndicator`
-- tratamento simples de erro com botao para tentar novamente
-- teste de widget para validar a exibicao da lista
+O ViewModel nao deve fazer chamadas HTTP diretamente porque a funcao dele e controlar o estado da tela.
+
+Se ele tambem fizer requisicao na internet, acaba misturando responsabilidades. Isso deixa o codigo mais dificil de entender, testar e manter.
+
+### 3. O que poderia acontecer se a interface acessasse diretamente o DataSource?
+
+Se a interface acessasse direto o DataSource, o codigo ficaria mais acoplado e menos organizado.
+
+Tambem ficaria mais dificil fazer manutencao, trocar implementacoes e reutilizar partes do sistema, porque a tela passaria a depender direto do acesso aos dados.
+
+### 4. Como essa arquitetura facilitaria a substituicao da API por um banco de dados local?
+
+Essa arquitetura facilita porque a tela nao depende direto da API.
+
+Quem decide de onde os dados vao vir e o repositorio. Entao, se no futuro eu quiser trocar a API por um banco local, a maior parte da aplicacao pode continuar igual, mudando mais a camada de dados.

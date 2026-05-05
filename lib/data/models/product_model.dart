@@ -16,4 +16,13 @@ class ProductModel extends Product {
       image: map['image'] as String? ?? '',
     );
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'title': title,
+      'price': price,
+      'image': image,
+    };
+  }
 }

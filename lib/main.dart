@@ -1,16 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'core/network/api_client.dart';
+import 'data/datasources/product_local_data_source.dart';
 import 'data/datasources/product_remote_data_source.dart';
 import 'data/repositories/product_repository_impl.dart';
 import 'domain/usecases/get_products.dart';
 import 'presentation/controllers/product_controller.dart';
 import 'presentation/pages/product_list_page.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   final apiClient = ApiClient();
+  final sharedPreferences = await SharedPreferences.getInstance();
+  final localDataSource = ProductLocalDataSourceImpl(
+    sharedPreferences: sharedPreferences,
+  );
   final remoteDataSource = ProductRemoteDataSourceImpl(apiClient: apiClient);
-  final repository = ProductRepositoryImpl(remoteDataSource: remoteDataSource);
+  final repository = ProductRepositoryImpl(
+    remoteDataSource: remoteDataSource,
+    localDataSource: localDataSource,
+  );
   final getProducts = GetProducts(repository);
   final controller = ProductController(getProducts: getProducts);
 

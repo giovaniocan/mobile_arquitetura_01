@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 
 import '../../domain/entities/product.dart';
 import '../../domain/usecases/get_products.dart';
+import 'product_state.dart';
 
 class ProductController extends ChangeNotifier {
   ProductController({required GetProducts getProducts})
@@ -9,22 +10,31 @@ class ProductController extends ChangeNotifier {
 
   final GetProducts _getProducts;
 
-  bool isLoading = false;
-  String? errorMessage;
-  List<Product> products = [];
+  ProductState _state = const ProductState();
+
+  ProductState get state => _state;
+  List<Product> get products => _state.products;
 
   Future<void> loadProducts() async {
-    isLoading = true;
-    errorMessage = null;
+    _state = _state.copyWith(
+      status: ProductStatus.loading,
+      clearErrorMessage: true,
+    );
     notifyListeners();
 
     try {
-      products = await _getProducts();
+      final loadedProducts = await _getProducts();
+      _state = ProductState(
+        status: ProductStatus.success,
+        products: loadedProducts,
+      );
     } catch (error) {
-      errorMessage = error.toString();
-    } finally {
-      isLoading = false;
-      notifyListeners();
+      _state = ProductState(
+        status: ProductStatus.error,
+        errorMessage: error.toString(),
+      );
     }
+
+    notifyListeners();
   }
 }
