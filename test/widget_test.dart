@@ -4,10 +4,10 @@ import 'package:mobile_arquitetura_01/domain/entities/product.dart';
 import 'package:mobile_arquitetura_01/domain/repositories/product_repository.dart';
 import 'package:mobile_arquitetura_01/domain/usecases/get_products.dart';
 import 'package:mobile_arquitetura_01/presentation/controllers/product_controller.dart';
-import 'package:mobile_arquitetura_01/presentation/pages/product_list_page.dart';
+import 'package:mobile_arquitetura_01/presentation/pages/home_page.dart';
 
 void main() {
-  testWidgets('deve exibir os produtos carregados na tela', (
+  testWidgets('deve navegar da tela inicial ate os detalhes do produto', (
     WidgetTester tester,
   ) async {
     final controller = ProductController(
@@ -15,15 +15,25 @@ void main() {
     );
 
     await tester.pumpWidget(
-      MaterialApp(home: ProductListPage(controller: controller)),
+      MaterialApp(home: HomePage(controller: controller)),
     );
 
+    expect(find.text('Pagina Inicial'), findsOneWidget);
+
+    await tester.tap(find.text('Ver produtos'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 50));
 
     expect(find.text('Lista de Produtos'), findsOneWidget);
     expect(find.text('Produto Teste'), findsOneWidget);
-    expect(find.text('R\$ 99.90'), findsOneWidget);
+
+    await tester.tap(find.text('Produto Teste'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 50));
+
+    expect(find.text('Detalhes do Produto'), findsOneWidget);
+    expect(find.text('Categoria: eletronicos'), findsOneWidget);
+    expect(find.text('Descricao de teste'), findsOneWidget);
   });
 }
 
@@ -36,6 +46,8 @@ class FakeProductRepository implements ProductRepository {
         title: 'Produto Teste',
         price: 99.9,
         image: 'https://example.com/image.png',
+        description: 'Descricao de teste',
+        category: 'eletronicos',
       ),
     ];
   }

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../../domain/entities/product.dart';
 import '../controllers/product_controller.dart';
 import '../controllers/product_state.dart';
+import 'product_details_page.dart';
 import '../widgets/product_card.dart';
 
 class ProductListPage extends StatefulWidget {
@@ -17,7 +19,9 @@ class _ProductListPageState extends State<ProductListPage> {
   @override
   void initState() {
     super.initState();
-    widget.controller.loadProducts();
+    if (widget.controller.state.status == ProductStatus.initial) {
+      widget.controller.loadProducts();
+    }
   }
 
   @override
@@ -74,8 +78,20 @@ class _ProductListPageState extends State<ProductListPage> {
       separatorBuilder: (_, _) => const SizedBox(height: 12),
       itemBuilder: (context, index) {
         final product = widget.controller.products[index];
-        return ProductCard(product: product);
+        return ProductCard(
+          product: product,
+          onTap: () => _openProductDetails(product),
+        );
       },
+    );
+  }
+
+  void _openProductDetails(Product product) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ProductDetailsPage(product: product),
+      ),
     );
   }
 }

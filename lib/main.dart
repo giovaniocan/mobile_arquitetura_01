@@ -7,7 +7,7 @@ import 'data/datasources/product_remote_data_source.dart';
 import 'data/repositories/product_repository_impl.dart';
 import 'domain/usecases/get_products.dart';
 import 'presentation/controllers/product_controller.dart';
-import 'presentation/pages/product_list_page.dart';
+import 'presentation/pages/home_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -42,7 +42,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
         useMaterial3: true,
       ),
-      home: ProductListPage(controller: controller),
+      home: HomePage(controller: controller),
     );
   }
 }

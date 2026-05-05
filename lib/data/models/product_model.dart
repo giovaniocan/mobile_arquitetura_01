@@ -6,6 +6,8 @@ class ProductModel extends Product {
     required super.title,
     required super.price,
     required super.image,
+    required super.description,
+    required super.category,
   });
 
   factory ProductModel.fromMap(Map<String, dynamic> map) {
@@ -14,6 +16,8 @@ class ProductModel extends Product {
       title: map['title'] as String? ?? 'Produto sem titulo',
       price: (map['price'] as num?)?.toDouble() ?? 0,
       image: map['image'] as String? ?? '',
+      description: map['description'] as String? ?? 'Sem descricao.',
+      category: map['category'] as String? ?? 'Sem categoria',
     );
   }
 
@@ -23,6 +27,8 @@ class ProductModel extends Product {
       'title': title,
       'price': price,
       'image': image,
+      'description': description,
+      'category': category,
     };
   }
 }
