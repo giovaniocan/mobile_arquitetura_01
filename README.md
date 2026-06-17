@@ -1,23 +1,36 @@
-# mobile_arquitetura_02
+# mobile_arquitetura_01
 
-Projeto feito em Flutter para a disciplina de Desenvolvimento para Dispositivos Moveis II.
+Projeto Flutter da disciplina de Desenvolvimento para Dispositivos Moveis II.
 
-O app consome a API `https://fakestoreapi.com/products` e mostra os produtos em tela com titulo, preco e imagem.
+O app utiliza a API [DummyJSON](https://dummyjson.com/) para autenticar usuarios e listar produtos. O fluxo principal exige login antes do acesso a listagem, exibe o nome do usuario autenticado, permite logout, abre a tela de detalhes do produto e oferece controle de favoritos com atualizacao automatica da interface.
 
-Neste projeto eu organizei o codigo em camadas:
+## Estrutura
 
-- `presentation`
-- `domain`
-- `data`
-- `core`
+O projeto esta organizado com separacao entre responsabilidades:
 
-Tambem foram adicionados:
+- `lib/models`: modelos do usuario autenticado e do produto
+- `lib/services`: comunicacao HTTP com a DummyJSON
+- `lib/session`: controle da sessao autenticada
+- `lib/pages`: telas de login, produtos e detalhes
+- `lib/presentation/controllers`: controle de favoritos e estados auxiliares
 
-- estado de carregamento
-- estado de sucesso
-- estado de erro
-- tratamento de erro na requisicao
-- cache local simples
+## Funcionalidades implementadas
+
+- login com validacao de usuario e senha
+- chamada `POST /auth/login`
+- tratamento de erro para credenciais invalidas
+- bloqueio de acesso a tela de produtos sem login
+- listagem via `GET /products`
+- detalhes via `GET /products/{id}`
+- exibicao do nome do usuario autenticado
+- logout com retorno para o login
+- favoritos com marcar, remover e atualizacao automatica da interface
+- botao manual para atualizar a lista de produtos
+- carregamento e tratamento de erro nas requisicoes
+
+## Gerenciamento de estado
+
+Neste projeto, o estado da interface foi resolvido com `setState` nas telas e `ChangeNotifier` nos controladores compartilhados. Essa escolha foi suficiente para o porte atual do app, manteve a implementacao simples e permitiu atualizar automaticamente a UI em login, favoritos, carregamento e detalhes.
 
 ## Como executar
 
@@ -26,28 +39,7 @@ flutter pub get
 flutter run
 ```
 
-## Atividade 5
+## Credenciais de teste
 
-### 1. Em qual camada foi implementado o mecanismo de cache? Explique por que essa decisao e adequada dentro da arquitetura proposta.
-
-O cache foi implementado na camada `data`, no `ProductLocalDataSource`.
-
-Eu considerei essa decisao adequada porque o cache faz parte do acesso aos dados. Assim, a interface nao precisa saber se os produtos vieram da internet ou do armazenamento local. Isso ajuda a manter o projeto mais organizado.
-
-### 2. Por que o ViewModel nao deve realizar chamadas HTTP diretamente?
-
-O ViewModel nao deve fazer chamadas HTTP diretamente porque a funcao dele e controlar o estado da tela.
-
-Se ele tambem fizer requisicao na internet, acaba misturando responsabilidades. Isso deixa o codigo mais dificil de entender, testar e manter.
-
-### 3. O que poderia acontecer se a interface acessasse diretamente o DataSource?
-
-Se a interface acessasse direto o DataSource, o codigo ficaria mais acoplado e menos organizado.
-
-Tambem ficaria mais dificil fazer manutencao, trocar implementacoes e reutilizar partes do sistema, porque a tela passaria a depender direto do acesso aos dados.
-
-### 4. Como essa arquitetura facilitaria a substituicao da API por um banco de dados local?
-
-Essa arquitetura facilita porque a tela nao depende direto da API.
-
-Quem decide de onde os dados vao vir e o repositorio. Entao, se no futuro eu quiser trocar a API por um banco local, a maior parte da aplicacao pode continuar igual, mudando mais a camada de dados.
+- Usuario: `emilys`
+- Senha: `emilyspass`
